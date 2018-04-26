@@ -85,7 +85,26 @@ controller.on('bot_channel_join', function (bot, message) {
     bot.reply(message, "I'm here!")
 });
 
-controller.hears('hello', 'direct_message', function (bot, message) {
+controller.hears(
+    ['Challenge', 'challenge'],
+    ['direct_message','mention', 'direct-mention'],
+    function (bot, message) {
+        bot.startConversation(message, function(err, convo) {
+            convo.say('Oh boy, challenge time!');
+            convo.ask('Who do you want to Challenge?', function(answer, convo) {
+            origin = message.from;
+            // do something with this answer!
+            // storeTacoType(convo.context.user, taco_type);
+            convo.say(origin + " vs " + answer.text); // add another reply
+            convo.next(); // continue with conversation
+            });
+          });
+});
+
+controller.hears(
+    ['hello', 'hi', 'greetings'],
+    ['direct_mention', 'mention', 'direct_message'],
+    function(bot,message) {
     bot.reply(message, 'Hello!');
 });
 
