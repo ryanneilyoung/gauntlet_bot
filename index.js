@@ -15,7 +15,7 @@ var botData = {companyList: [],
                                }
                };
 
-var yearPicker = [2018,2018,2020];
+var yearPicker = [2018,2019,2020];
 
 var monthPicker = ["January",
                    "February",
@@ -188,6 +188,17 @@ controller.hears(
     bot.reply(message, response);
 });
 
+controller.hears(
+    ['drop companies', 'delete company'],
+    ['drop companies', 'delete company'],
+    ['direct_mention', 'mention', 'direct_message'],
+    function(bot,message) {
+        response = 'The companies participating in the Guantlet Challenge are: \n';
+        botData.companyList.forEach(function(item){
+            response += item + '\n';
+        })
+    bot.reply(message, response);
+});
 
 //************************************************
 // Challenger Section
