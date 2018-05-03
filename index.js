@@ -3,7 +3,7 @@
  */
 var fs = require('fs');
 require('dotenv').load();
-const WebSocket = require('..');
+const WebSocket = require('ws');
 
 var botData = {companyList: [],
                challenger: '',
