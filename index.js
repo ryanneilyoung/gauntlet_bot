@@ -468,7 +468,7 @@ const server = https.createServer({
     key: fs.readFileSync('/etc/letsencrypt/live/yeggauntlet.com/privkey.pem')
 });
 
-const wss = new WebSocket.Server({ server });
+const wss = new WebSocket.Server({server, port:9999});
 
 wss.on('connection', function connection(ws) {
     console.log('here1');
@@ -481,5 +481,3 @@ wss.on('connection', function connection(ws) {
 
     console.log('here3');
 });
-
-server.listen(9999);
