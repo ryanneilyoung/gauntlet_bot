@@ -4,6 +4,7 @@
 var fs = require('fs');
 require('dotenv').load();
 const WebSocket = require('ws');
+const https = require("https");
 
 var botData = {companyList: [],
                challenger: '',
