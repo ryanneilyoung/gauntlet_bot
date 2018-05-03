@@ -2,7 +2,8 @@
  * A Bot for Slack!
  */
 var fs = require('fs');
-
+require('dotenv').load();
+const WebSocket = require('..');
 
 var botData = {companyList: [],
                challenger: '',
@@ -457,9 +458,14 @@ controller.on('direct_message,mention,direct_mention', function (bot, message) {
 // should this be here?  definitely not but i'm hacking it together so deal with it
 //***************************************************
 
-const WebSocket = require('ws');
+//const WebSocket = require('ws');
 
-const wss = new WebSocket.Server({ server: httpsServer, port: 9999 });
+const server = https.createServer({
+    cert: fs.readFileSync('/etc/letsencrypt/live/yeggauntlet.com/fullchain.pem'),
+    key: fs.readFileSync('/etc/letsencrypt/live/yeggauntlet.com/privkey.pem')
+  });
+
+const wss = new WebSocket.Server({server});
 
 wss.on('connection', function connection(ws) {
   console.log('here1');
@@ -472,3 +478,5 @@ wss.on('connection', function connection(ws) {
 
   console.log('here3');
 });
+
+server.listen(9999);
