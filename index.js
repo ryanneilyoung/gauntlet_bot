@@ -106,7 +106,6 @@ if (process.env.MONGOLAB_URI) {
 /**
  * Are being run as an app or a custom integration? The initialization will differ, depending
  */
-
 if (process.env.TOKEN || process.env.SLACK_TOKEN) {
     //Treat this as a custom integration
     var customIntegration = require('./lib/custom_integrations');
@@ -460,7 +459,7 @@ controller.on('direct_message,mention,direct_mention', function (bot, message) {
 
 const WebSocket = require('ws');
 
-const wss = new WebSocket.Server({ port: 9999 });
+const wss = new WebSocket.Server({ server: httpsServer, port: 9999 });
 
 wss.on('connection', function connection(ws) {
   console.log('here1');
