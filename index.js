@@ -1,45 +1,48 @@
 /**
  * A Bot for Slack!
  */
-var fs = require('fs');
+import { writeFile, readFile, readFileSync } from "fs";
 require('dotenv').load();
-const WebSocket = require('ws');
-const https = require("https");
+import { Server } from "ws";
+import { createServer } from "https";
+import WebSocket from "ws";
 
-var botData = {companyList: [],
-               challenger: '',
-               challengee: '',
-               countdownTimer: {year:'',
-                                month:'',
-                                day:'',
-                                hour:'',
-                                minute:''
-                               }
-               };
+var botData = {
+    companyList: [],
+    challenger: '',
+    challengee: '',
+    countdownTimer: {
+        year: '',
+        month: '',
+        day: '',
+        hour: '',
+        minute: ''
+    }
+};
 
-var yearPicker = [2018,2019,2020];
+var yearPicker = [2018, 2019, 2020];
 
 var monthPicker = ["January",
-                   "February",
-                   "March",
-                   "April",
-                   "May",
-                   "June",
-                   "July",
-                   "August",
-                   "September",
-                   "October",
-                   "November",
-                   "December"];
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"];
 
-var dayPicker = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31];
-var hourPicker = [1,2,3,4,5,6,7,8,9,10,11,12];
-var meridianPicker = ['am','pm'];
-var minutePicker = [0,15,30,45];
+var dayPicker = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31];
+var hourPicker = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+var meridianPicker = ['am', 'pm'];
+var minutePicker = [0, 15, 30, 45];
 
 
-function saveData(){
-    fs.writeFile("./data.json", JSON.stringify(botData), function(err){
+function saveData() {
+    writeFile("./data.json", JSON.stringify(botData), function (err) {
         if (err) {
             return console.log(err);
         }
@@ -47,13 +50,13 @@ function saveData(){
     });
 }
 
-function loadData(){
-    fs.readFile("./data.json", function read(err, data) {
+function loadData() {
+    readFile("./data.json", function read(err, data) {
         if (err) {
             throw err;
         }
-        console.log('DATA: '+data);
-        if (data.length > 0){
+        console.log('DATA: ' + data);
+        if (data.length > 0) {
             console.log('madeithere');
             botData = JSON.parse(data);
         }
@@ -67,7 +70,7 @@ function loadData(){
 
 function onInstallation(bot, installer) {
     if (installer) {
-        bot.startPrivateConversation({user: installer}, function (err, convo) {
+        bot.startPrivateConversation({ user: installer }, function (err, convo) {
             if (err) {
                 console.log(err);
             } else {
@@ -79,10 +82,10 @@ function onInstallation(bot, installer) {
 }
 
 
-function displayArray(arr){            
+function displayArray(arr) {
     i = 0;
     returnvalue = '';
-    arr.forEach(function(item){
+    arr.forEach(function (item) {
         returnvalue += i + ': ' + item + '\n';
         i++;
     })
@@ -97,11 +100,11 @@ var config = {};
 if (process.env.MONGOLAB_URI) {
     var BotkitStorage = require('botkit-storage-mongo');
     config = {
-        storage: BotkitStorage({mongoUri: process.env.MONGOLAB_URI}),
+        storage: BotkitStorage({ mongoUri: process.env.MONGOLAB_URI }),
     };
 } else {
     config = {
-        json_file_store: ((process.env.TOKEN)?'./db_slack_bot_ci/':'./db_slack_bot_a/'), //use a different name if an app or CI
+        json_file_store: ((process.env.TOKEN) ? './db_slack_bot_ci/' : './db_slack_bot_a/'), //use a different name if an app or CI
     };
 }
 
@@ -163,81 +166,81 @@ controller.on('bot_channel_join', function (bot, message) {
 //********************************************
 controller.hears(
     ['add company'],
-    ['direct_message','mention', 'direct-mention'],
+    ['direct_message', 'mention', 'direct-mention'],
     function (bot, message) {
-        bot.startConversation(message, function(err, convo) {
-            convo.ask('What company do you want to add?', function(answer, convo) {
-            botData.companyList.push(answer.text);
+        bot.startConversation(message, function (err, convo) {
+            convo.ask('What company do you want to add?', function (answer, convo) {
+                botData.companyList.push(answer.text);
 
-            saveData();
-            // do something with this answer!
-            // storeTacoType(convo.context.user, taco_type);
-            convo.say("I have added " + answer.text + " to the list."); // add another reply
-            convo.next(); // continue with conversation
+                saveData();
+                // do something with this answer!
+                // storeTacoType(convo.context.user, taco_type);
+                convo.say("I have added " + answer.text + " to the list."); // add another reply
+                convo.next(); // continue with conversation
             });
-          });
-});
+        });
+    });
 
 controller.hears(
     ['list companies', 'list company'],
     ['direct_mention', 'mention', 'direct_message'],
-    function(bot,message) {
+    function (bot, message) {
         response = 'The companies participating in the Guantlet Challenge are: \n';
-        botData.companyList.forEach(function(item){
+        botData.companyList.forEach(function (item) {
             response += item + '\n';
         })
-    bot.reply(message, response);
-});
+        bot.reply(message, response);
+    });
 
 controller.hears(
     ['drop companies', 'delete company'],
     ['drop companies', 'delete company'],
     ['direct_mention', 'mention', 'direct_message'],
-    function(bot,message) {
+    function (bot, message) {
         response = 'The companies participating in the Guantlet Challenge are: \n';
-        botData.companyList.forEach(function(item){
+        botData.companyList.forEach(function (item) {
             response += item + '\n';
         })
-    bot.reply(message, response);
-});
+        bot.reply(message, response);
+    });
 
 //************************************************
 // Challenger Section
 //************************************************
 controller.hears(
     ['register challenger'],
-    ['direct_message','mention', 'direct-mention'],
+    ['direct_message', 'mention', 'direct-mention'],
     function (bot, message) {
-        bot.startConversation(message, function(err, convo) {
+        bot.startConversation(message, function (err, convo) {
             question = 'Please type the number of the company that will become the challenger:\n';
             question += displayArray(botData.companyList);
 
-            convo.ask(question, function(answer, convo) {
-            index = parseInt(answer.text);
+            convo.ask(question, function (answer, convo) {
+                index = parseInt(answer.text);
 
-            if ((typeof index == "number") && 
-                (index <= botData.companyList.length) &&
-                (index >= 0)
+                if ((typeof index == "number") &&
+                    (index <= botData.companyList.length) &&
+                    (index >= 0)
                 ) {
-                botData.challenger = botData.companyList[index];
-                saveData();
-                convo.say(botData.challenger + " is now the challenger.");
-            } else {
-                convo.say("Nice try funny guy \"" +answer.text+ "\" is not a valid answer");
-            }
+                    botData.challenger = botData.companyList[index];
+                    saveData();
+                    convo.say(botData.challenger + " is now the challenger.");
+                } else {
+                    convo.say("Nice try funny guy \"" + answer.text + "\" is not a valid answer");
+                }
 
-            convo.next(); // continue with conversation
+                convo.next(); // continue with conversation
             });
         });
-});
+    });
 
 controller.hears(
     ['who is the challenger', 'list challenger', 'challenger'],
     ['direct_mention', 'mention', 'direct_message'],
-    function(bot,message) {
+    function (bot, message) {
         response = 'The challenger is: ' + botData.challenger;
-    bot.reply(message, response);
-});
+        bot.reply(message, response);
+    });
 
 
 //************************************************
@@ -245,40 +248,40 @@ controller.hears(
 //************************************************
 controller.hears(
     ['Challenge', 'challenge'],
-    ['direct_message','mention', 'direct-mention'],
+    ['direct_message', 'mention', 'direct-mention'],
     function (bot, message) {
-        bot.startConversation(message, function(err, convo) {
+        bot.startConversation(message, function (err, convo) {
             convo.say('Oh boy, challenge time!');
-              question = 'The gauntlet will be dropped\nPlease pick a number for the company you want to challenge:\n';
+            question = 'The gauntlet will be dropped\nPlease pick a number for the company you want to challenge:\n';
             i = 0;
-            botData.companyList.forEach(function(item){
+            botData.companyList.forEach(function (item) {
                 question += i + ': ' + item + '\n';
                 i++;
             })
 
-            convo.ask(question, function(answer, convo) {
-            index = parseInt(answer.text);
+            convo.ask(question, function (answer, convo) {
+                index = parseInt(answer.text);
 
-            if ((typeof index == "number") && 
-                (index <= botData.companyList.length) &&
-                (index >= 0)
+                if ((typeof index == "number") &&
+                    (index <= botData.companyList.length) &&
+                    (index >= 0)
                 ) {
-                if (botData.companyList[index] == botData.challenger){
-                    convo.say("You can't challenge yourself now.  Wait until you're alone tonight");
+                    if (botData.companyList[index] == botData.challenger) {
+                        convo.say("You can't challenge yourself now.  Wait until you're alone tonight");
+                    } else {
+                        botData.challengee = botData.companyList[index];
+                        saveData();
+                        convo.say("THE CHALLENGE IS SET");
+                        convo.say(":boom:It's " + botData.challenger + ' versus ' + botData.challengee + ":boom:");
+                    }
                 } else {
-                    botData.challengee = botData.companyList[index];
-                    saveData();
-                    convo.say("THE CHALLENGE IS SET");
-                    convo.say(":boom:It's " + botData.challenger + ' versus '+ botData.challengee+ ":boom:");
+                    convo.say("Nice try funny guy \"" + answer.text + "\" is not a valid answer");
                 }
-            } else {
-                convo.say("Nice try funny guy \"" +answer.text+ "\" is not a valid answer");
-            }
 
-            convo.next(); // continue with conversation
+                convo.next(); // continue with conversation
             });
-          });
-});
+        });
+    });
 
 
 //************************************************
@@ -286,112 +289,112 @@ controller.hears(
 //************************************************
 controller.hears(
     ['set timer', 'set countdown'],
-    ['direct_message','mention', 'direct-mention'],
+    ['direct_message', 'mention', 'direct-mention'],
     function (bot, message) {
-        bot.startConversation(message, function(err, convo) {
+        bot.startConversation(message, function (err, convo) {
             question = 'Please type the number of the year:\n';
             question += displayArray(yearPicker);
 
-            convo.ask(question, function(answer, convo) {
+            convo.ask(question, function (answer, convo) {
                 index = parseInt(answer.text);
 
-                if ((typeof index == "number") && 
+                if ((typeof index == "number") &&
                     (index <= yearPicker.length) &&
                     (index >= 0)
-                    ) {
+                ) {
                     botData.countdownTimer.year = yearPicker[index];
-                    
+
                     question2 = 'Please type the number of the month:\n';
                     question2 += displayArray(monthPicker);
 
-                    convo.ask(question2, function(answer, convo) {
+                    convo.ask(question2, function (answer, convo) {
                         index = parseInt(answer.text);
 
-                        if ((typeof index == "number") && 
+                        if ((typeof index == "number") &&
                             (index <= monthPicker.length) &&
                             (index >= 0)
-                            ) {
+                        ) {
                             botData.countdownTimer.month = monthPicker[index];
 
                             question3 = 'Day?:\n';
                             question3 += displayArray(dayPicker);
 
-                            convo.ask(question3, function(answer, convo) {
+                            convo.ask(question3, function (answer, convo) {
                                 index = parseInt(answer.text);
 
-                                if ((typeof index == "number") && 
+                                if ((typeof index == "number") &&
                                     (index <= dayPicker.length) &&
                                     (index >= 0)
-                                    ) {
+                                ) {
                                     botData.countdownTimer.day = dayPicker[index];
-                                    
+
                                     question4 = 'Hour?\n';
                                     question4 += displayArray(hourPicker);
 
-                                    convo.ask(question4, function(answer, convo) {
+                                    convo.ask(question4, function (answer, convo) {
                                         index = parseInt(answer.text);
 
-                                        if ((typeof index == "number") && 
+                                        if ((typeof index == "number") &&
                                             (index <= hourPicker.length) &&
                                             (index >= 0)
-                                            ) {
+                                        ) {
                                             botData.countdownTimer.hour = hourPicker[index];
-                                            
+
                                             question5 = 'AM or PM?\n';
                                             question5 += displayArray(meridianPicker);
 
-                                            convo.ask(question5, function(answer, convo) {
+                                            convo.ask(question5, function (answer, convo) {
                                                 index = parseInt(answer.text);
 
-                                                if ((typeof index == "number") && 
+                                                if ((typeof index == "number") &&
                                                     (index <= meridianPicker.length) &&
                                                     (index >= 0)
-                                                    ) {
-                                                    if(index == 1){
+                                                ) {
+                                                    if (index == 1) {
                                                         botData.countdownTimer.hour += 12;
                                                     }
                                                     question6 = 'Minute?\n';
                                                     question6 += displayArray(minutePicker);
 
-                                                    convo.ask(question6, function(answer, convo) {
+                                                    convo.ask(question6, function (answer, convo) {
                                                         index = parseInt(answer.text);
 
-                                                        if ((typeof index == "number") && 
+                                                        if ((typeof index == "number") &&
                                                             (index <= minutePicker.length) &&
                                                             (index >= 0)
-                                                            ) {
-                                                               
+                                                        ) {
+
                                                             botData.countdownTimer.minute = minutePicker[index];
                                                             saveData();
                                                             convo.say("The timer is now set for: " + botData.countdownTimer.year +
-                                                                      "-" + botData.countdownTimer.month +
-                                                                      "-" + botData.countdownTimer.day +
-                                                                      " " + botData.countdownTimer.hour +
-                                                                      ":" + botData.countdownTimer.minute);
+                                                                "-" + botData.countdownTimer.month +
+                                                                "-" + botData.countdownTimer.day +
+                                                                " " + botData.countdownTimer.hour +
+                                                                ":" + botData.countdownTimer.minute);
                                                         } else {
-                                                            convo.say("Nice try funny guy \"" +answer.text+ "\" is not a valid answer");
+                                                            convo.say("Nice try funny guy \"" + answer.text + "\" is not a valid answer");
                                                         }
 
-                                                    convo.next(); // continue with conversation
-                                                });
+                                                        convo.next(); // continue with conversation
+                                                    });
                                                 } else {
-                                                    convo.say("Nice try funny guy \"" +answer.text+ "\" is not a valid answer");
+                                                    convo.say("Nice try funny guy \"" + answer.text + "\" is not a valid answer");
                                                 }
 
-                                            convo.next(); // continue with conversation
-                                        });
+                                                convo.next(); // continue with conversation
+                                            });
                                         } else {
-                                            convo.say("Nice try funny guy \"" +answer.text+ "\" is not a valid answer");
+                                            convo.say("Nice try funny guy \"" + answer.text + "\" is not a valid answer");
                                         }
 
-                                    convo.next(); // continue with conversation
-                                });
+                                        convo.next(); // continue with conversation
+                                    });
                                 } else {
-                                    convo.say("Nice try funny guy \"" +answer.text+ "\" is not a valid answer");
+                                    convo.say("Nice try funny guy \"" + answer.text + "\" is not a valid answer");
                                 }
 
-                            convo.next(); // continue with conversation
-                        });
+                                convo.next(); // continue with conversation
+                            });
 
 
 
@@ -399,40 +402,40 @@ controller.hears(
 
 
                         } else {
-                            convo.say("Nice try funny guy \"" +answer.text+ "\" is not a valid answer");
+                            convo.say("Nice try funny guy \"" + answer.text + "\" is not a valid answer");
                         }
 
-                    convo.next(); // continue with conversation
-                });
+                        convo.next(); // continue with conversation
+                    });
 
                 } else {
-                    convo.say("Nice try funny guy \"" +answer.text+ "\" is not a valid answer");
+                    convo.say("Nice try funny guy \"" + answer.text + "\" is not a valid answer");
                 }
 
-            convo.next(); // continue with conversation
+                convo.next(); // continue with conversation
+            });
         });
     });
-});
 
 controller.hears(
     ['get timer'],
     ['direct_mention', 'mention', 'direct_message'],
-    function(bot,message) {
-    bot.reply(message, "The timer is now set for: " + botData.countdownTimer.year +
-                                                  "-" + botData.countdownTimer.month +
-                                                  "-" + botData.countdownTimer.day +
-                                                  " " + botData.countdownTimer.hour +
-                                                  ":" + botData.countdownTimer.minute);
-});
+    function (bot, message) {
+        bot.reply(message, "The timer is now set for: " + botData.countdownTimer.year +
+            "-" + botData.countdownTimer.month +
+            "-" + botData.countdownTimer.day +
+            " " + botData.countdownTimer.hour +
+            ":" + botData.countdownTimer.minute);
+    });
 //************************************************
 // Stupid easter egg section
 //************************************************
 controller.hears(
     ['hello', 'hi', 'greetings'],
     ['direct_mention', 'mention', 'direct_message'],
-    function(bot,message) {
-    bot.reply(message, 'Hello!');
-});
+    function (bot, message) {
+        bot.reply(message, 'Hello!');
+    });
 
 
 /**
@@ -459,25 +462,23 @@ controller.on('direct_message,mention,direct_mention', function (bot, message) {
 // should this be here?  definitely not but i'm hacking it together so deal with it
 //***************************************************
 
-//const WebSocket = require('ws');
+const server = createServer({
+    cert: readFileSync('/etc/letsencrypt/live/yeggauntlet.com/fullchain.pem'),
+    key: readFileSync('/etc/letsencrypt/live/yeggauntlet.com/privkey.pem')
+});
 
-const server = https.createServer({
-    cert: fs.readFileSync('/etc/letsencrypt/live/yeggauntlet.com/fullchain.pem'),
-    key: fs.readFileSync('/etc/letsencrypt/live/yeggauntlet.com/privkey.pem')
-  });
-
-const wss = new WebSocket.Server({server});
+const wss = new WebSocket.Server({ server });
 
 wss.on('connection', function connection(ws) {
-  console.log('here1');
-  ws.on('message', function incoming(message) {
-    console.log('received: %s', message);
-  });
+    console.log('here1');
+    ws.on('message', function incoming(message) {
+        console.log('received: %s', message);
+    });
 
-  console.log('here2: ' + botData);
-  ws.send(JSON.stringify(botData));
+    console.log('here2: ' + botData);
+    ws.send(JSON.stringify(botData));
 
-  console.log('here3');
+    console.log('here3');
 });
 
 server.listen(9999);
