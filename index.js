@@ -1,11 +1,10 @@
 /**
  * A Bot for Slack!
  */
-import { writeFile, readFile, readFileSync } from "fs";
+var fs = require('fs');
 require('dotenv').load();
-import { Server } from "ws";
-import { createServer } from "https";
-import WebSocket from "ws";
+const WebSocket = require('ws');
+const https = require("https");
 
 var botData = {
     companyList: [],
@@ -42,7 +41,7 @@ var minutePicker = [0, 15, 30, 45];
 
 
 function saveData() {
-    writeFile("./data.json", JSON.stringify(botData), function (err) {
+    fs.writeFile("./data.json", JSON.stringify(botData), function (err) {
         if (err) {
             return console.log(err);
         }
@@ -51,7 +50,7 @@ function saveData() {
 }
 
 function loadData() {
-    readFile("./data.json", function read(err, data) {
+    fs.readFile("./data.json", function read(err, data) {
         if (err) {
             throw err;
         }
@@ -462,9 +461,11 @@ controller.on('direct_message,mention,direct_mention', function (bot, message) {
 // should this be here?  definitely not but i'm hacking it together so deal with it
 //***************************************************
 
-const server = createServer({
-    cert: readFileSync('/etc/letsencrypt/live/yeggauntlet.com/fullchain.pem'),
-    key: readFileSync('/etc/letsencrypt/live/yeggauntlet.com/privkey.pem')
+//const WebSocket = require('ws');
+
+const server = https.createServer({
+    cert: fs.readFileSync('/etc/letsencrypt/live/yeggauntlet.com/fullchain.pem'),
+    key: fs.readFileSync('/etc/letsencrypt/live/yeggauntlet.com/privkey.pem')
 });
 
 const wss = new WebSocket.Server({ server });
