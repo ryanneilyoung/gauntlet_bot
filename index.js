@@ -31,7 +31,8 @@ var monthPicker = ["January",
     "September",
     "October",
     "November",
-    "December"];
+    "December"
+];
 
 var dayPicker = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31];
 var hourPicker = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
@@ -68,7 +69,9 @@ function loadData() {
 
 function onInstallation(bot, installer) {
     if (installer) {
-        bot.startPrivateConversation({ user: installer }, function (err, convo) {
+        bot.startPrivateConversation({
+            user: installer
+        }, function (err, convo) {
             if (err) {
                 console.log(err);
             } else {
@@ -98,7 +101,9 @@ var config = {};
 if (process.env.MONGOLAB_URI) {
     var BotkitStorage = require('botkit-storage-mongo');
     config = {
-        storage: BotkitStorage({ mongoUri: process.env.MONGOLAB_URI }),
+        storage: BotkitStorage({
+            mongoUri: process.env.MONGOLAB_URI
+        }),
     };
 } else {
     config = {
@@ -163,8 +168,7 @@ controller.on('bot_channel_join', function (bot, message) {
 // Companies Section
 //********************************************
 controller.hears(
-    ['add company'],
-    ['direct_message', 'mention', 'direct-mention'],
+    ['add company'], ['direct_message', 'mention', 'direct-mention'],
     function (bot, message) {
         bot.startConversation(message, function (err, convo) {
             convo.ask('What company do you want to add?', function (answer, convo) {
@@ -180,8 +184,7 @@ controller.hears(
     });
 
 controller.hears(
-    ['list companies', 'list company'],
-    ['direct_mention', 'mention', 'direct_message'],
+    ['list companies', 'list company'], ['direct_mention', 'mention', 'direct_message'],
     function (bot, message) {
         response = 'The companies participating in the Guantlet Challenge are: \n';
         botData.companyList.forEach(function (item) {
@@ -191,9 +194,7 @@ controller.hears(
     });
 
 controller.hears(
-    ['drop companies', 'delete company'],
-    ['drop companies', 'delete company'],
-    ['direct_mention', 'mention', 'direct_message'],
+    ['drop companies', 'delete company'], ['drop companies', 'delete company'], ['direct_mention', 'mention', 'direct_message'],
     function (bot, message) {
         response = 'The companies participating in the Guantlet Challenge are: \n';
         botData.companyList.forEach(function (item) {
@@ -206,8 +207,7 @@ controller.hears(
 // Challenger Section
 //************************************************
 controller.hears(
-    ['register challenger'],
-    ['direct_message', 'mention', 'direct-mention'],
+    ['register challenger'], ['direct_message', 'mention', 'direct-mention'],
     function (bot, message) {
         bot.startConversation(message, function (err, convo) {
             question = 'Please type the number of the company that will become the challenger:\n';
@@ -233,8 +233,7 @@ controller.hears(
     });
 
 controller.hears(
-    ['who is the challenger', 'list challenger', 'challenger'],
-    ['direct_mention', 'mention', 'direct_message'],
+    ['who is the challenger', 'list challenger', 'challenger'], ['direct_mention', 'mention', 'direct_message'],
     function (bot, message) {
         response = 'The challenger is: ' + botData.challenger;
         bot.reply(message, response);
@@ -245,8 +244,7 @@ controller.hears(
 // START CHALLENGE
 //************************************************
 controller.hears(
-    ['Challenge', 'challenge'],
-    ['direct_message', 'mention', 'direct-mention'],
+    ['Challenge', 'challenge'], ['direct_message', 'mention', 'direct-mention'],
     function (bot, message) {
         bot.startConversation(message, function (err, convo) {
             convo.say('Oh boy, challenge time!');
@@ -286,8 +284,7 @@ controller.hears(
 // Set Countdown
 //************************************************
 controller.hears(
-    ['set timer', 'set countdown'],
-    ['direct_message', 'mention', 'direct-mention'],
+    ['set timer', 'set countdown'], ['direct_message', 'mention', 'direct-mention'],
     function (bot, message) {
         bot.startConversation(message, function (err, convo) {
             question = 'Please type the number of the year:\n';
@@ -416,8 +413,7 @@ controller.hears(
     });
 
 controller.hears(
-    ['get timer'],
-    ['direct_mention', 'mention', 'direct_message'],
+    ['get timer'], ['direct_mention', 'mention', 'direct_message'],
     function (bot, message) {
         bot.reply(message, "The timer is now set for: " + botData.countdownTimer.year +
             "-" + botData.countdownTimer.month +
@@ -429,8 +425,7 @@ controller.hears(
 // Stupid easter egg section
 //************************************************
 controller.hears(
-    ['hello', 'hi', 'greetings'],
-    ['direct_mention', 'mention', 'direct_message'],
+    ['hello', 'hi', 'greetings'], ['direct_mention', 'mention', 'direct_message'],
     function (bot, message) {
         bot.reply(message, 'Hello!');
     });
@@ -464,7 +459,9 @@ controller.on('direct_message,mention,direct_mention', function (bot, message) {
 
 
 
-const wss = new WebSocket.Server({port:9999});
+const wss = new WebSocket.Server({
+    port: 443
+});
 
 wss.on('connection', function connection(ws) {
     console.log('here1');
