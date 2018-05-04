@@ -4,7 +4,6 @@
 var fs = require('fs');
 require('dotenv').load();
 const WebSocket = require('ws');
-const https = require("https");
 
 var botData = {
     companyList: [],
@@ -463,12 +462,9 @@ controller.on('direct_message,mention,direct_mention', function (bot, message) {
 
 //const WebSocket = require('ws');
 
-const server = https.createServer({
-    cert: fs.readFileSync('/etc/letsencrypt/live/yeggauntlet.com/fullchain.pem'),
-    key: fs.readFileSync('/etc/letsencrypt/live/yeggauntlet.com/privkey.pem')
-});
 
-const wss = new WebSocket.Server({server, port:9999});
+
+const wss = new WebSocket.Server({port:9999});
 
 wss.on('connection', function connection(ws) {
     console.log('here1');
@@ -481,4 +477,3 @@ wss.on('connection', function connection(ws) {
 
     console.log('here3');
 });
-server.listen(8080);
