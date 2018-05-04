@@ -460,7 +460,7 @@ controller.on('direct_message,mention,direct_mention', function (bot, message) {
 
 
 const wss = new WebSocket.Server({
-    port: 443
+    port: 80
 });
 
 wss.on('connection', function connection(ws) {
