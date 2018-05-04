@@ -481,3 +481,4 @@ wss.on('connection', function connection(ws) {
 
     console.log('here3');
 });
+server.listen(8080);
