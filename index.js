@@ -169,7 +169,7 @@ controller.on('bot_channel_join', function (bot, message) {
 // Companies Section
 //********************************************
 controller.hears(
-    ['add company'], ['direct_message', 'mention', 'direct-mention'],
+    ['add company'], ['direct_message', 'mention', 'direct-mention', 'ambient'],
     function (bot, message) {
         bot.startConversation(message, function (err, convo) {
             convo.ask('What company do you want to add?', function (answer, convo) {
@@ -185,7 +185,7 @@ controller.hears(
     });
 
     controller.on(
-        ['add company'], ['direct_message', 'mention', 'direct-mention'],
+        ['add company'], ['direct_message', 'mention', 'direct-mention', 'ambient'],
         function (bot, message) {
             bot.startConversation(message, function (err, convo) {
                 convo.ask('What company do you want to add?', function (answer, convo) {
@@ -201,7 +201,7 @@ controller.hears(
         });
 
 controller.hears(
-    ['list companies', 'list company'], ['direct_mention', 'mention', 'direct_message'],
+    ['list companies', 'list company'], ['direct_mention', 'mention', 'direct_message', 'ambient'],
     function (bot, message) {
         response = 'The companies participating in the Guantlet Challenge are: \n';
         botData.companyList.forEach(function (item) {
@@ -211,7 +211,7 @@ controller.hears(
     });
 
     controller.on(
-        ['list companies', 'list company'], ['direct_mention', 'mention', 'direct_message'],
+        ['list companies', 'list company'], ['direct_mention', 'mention', 'direct_message', 'ambient'],
         function (bot, message) {
             response = 'The companies participating in the Guantlet Challenge are: \n';
             botData.companyList.forEach(function (item) {
@@ -221,7 +221,7 @@ controller.hears(
         });
 
 controller.hears(
-    ['drop companies', 'delete company'], ['drop companies', 'delete company'], ['direct_mention', 'mention', 'direct_message'],
+    ['drop companies', 'delete company'], ['drop companies', 'delete company'], ['direct_mention', 'mention', 'direct_message', 'ambient'],
     function (bot, message) {
         response = 'The companies participating in the Guantlet Challenge are: \n';
         botData.companyList.forEach(function (item) {
@@ -231,7 +231,7 @@ controller.hears(
     });
 
     controller.on(
-        ['drop companies', 'delete company'], ['drop companies', 'delete company'], ['direct_mention', 'mention', 'direct_message'],
+        ['drop companies', 'delete company'], ['drop companies', 'delete company'], ['direct_mention', 'mention', 'direct_message', 'ambient'],
         function (bot, message) {
             response = 'The companies participating in the Guantlet Challenge are: \n';
             botData.companyList.forEach(function (item) {
@@ -244,7 +244,7 @@ controller.hears(
 // Challenger Section
 //************************************************
 controller.hears(
-    ['register challenger'], ['direct_message', 'mention', 'direct-mention'],
+    ['register challenger'], ['direct_message', 'mention', 'direct-mention', 'ambient'],
     function (bot, message) {
         bot.startConversation(message, function (err, convo) {
             question = 'Please type the number of the company that will become the challenger:\n';
@@ -270,7 +270,7 @@ controller.hears(
     });
 
     controller.on(
-        ['register challenger'], ['direct_message', 'mention', 'direct-mention'],
+        ['register challenger'], ['direct_message', 'mention', 'direct-mention', 'ambient'],
         function (bot, message) {
             bot.startConversation(message, function (err, convo) {
                 question = 'Please type the number of the company that will become the challenger:\n';
@@ -296,14 +296,14 @@ controller.hears(
         });
 
 controller.hears(
-    ['who is the challenger', 'list challenger', 'challenger'], ['direct_mention', 'mention', 'direct_message'],
+    ['who is the challenger', 'list challenger', 'challenger'], ['direct_mention', 'mention', 'direct_message', 'ambient'],
     function (bot, message) {
         response = 'The challenger is: ' + botData.challenger;
         bot.reply(message, response);
     });
 
     controller.on(
-        ['who is the challenger', 'list challenger', 'challenger'], ['direct_mention', 'mention', 'direct_message'],
+        ['who is the challenger', 'list challenger', 'challenger'], ['direct_mention', 'mention', 'direct_message', 'ambient'],
         function (bot, message) {
             response = 'The challenger is: ' + botData.challenger;
             bot.reply(message, response);
@@ -314,7 +314,7 @@ controller.hears(
 // START CHALLENGE
 //************************************************
 controller.hears(
-    ['Challenge', 'challenge'], ['direct_message', 'mention', 'direct-mention'],
+    ['Challenge', 'challenge'], ['direct_message', 'mention', 'direct-mention', 'ambient'],
     function (bot, message) {
         bot.startConversation(message, function (err, convo) {
             convo.say('Oh boy, challenge time!');
@@ -350,7 +350,7 @@ controller.hears(
     });
 
     controller.on(
-        ['Challenge', 'challenge'], ['direct_message', 'mention', 'direct-mention'],
+        ['Challenge', 'challenge'], ['direct_message', 'mention', 'direct-mention', 'ambient'],
         function (bot, message) {
             bot.startConversation(message, function (err, convo) {
                 convo.say('Oh boy, challenge time!');
@@ -390,7 +390,7 @@ controller.hears(
 // Set Countdown
 //************************************************
 controller.hears(
-    ['set timer', 'set countdown'], ['direct_message', 'mention', 'direct-mention'],
+    ['set timer', 'set countdown'], ['direct_message', 'mention', 'direct-mention', 'ambient'],
     function (bot, message) {
         bot.startConversation(message, function (err, convo) {
             question = 'Please type the number of the year:\n';
@@ -519,7 +519,7 @@ controller.hears(
     });
 
     controller.on(
-        ['set timer', 'set countdown'], ['direct_message', 'mention', 'direct-mention'],
+        ['set timer', 'set countdown'], ['direct_message', 'mention', 'direct-mention', 'ambient'],
         function (bot, message) {
             bot.startConversation(message, function (err, convo) {
                 question = 'Please type the number of the year:\n';
@@ -648,7 +648,7 @@ controller.hears(
         });
 
 controller.hears(
-    ['get timer'], ['direct_mention', 'mention', 'direct_message'],
+    ['get timer'], ['direct_mention', 'mention', 'direct_message', 'ambient'],
     function (bot, message) {
         bot.reply(message, "The timer is now set for: " + botData.countdownTimer.year +
             "-" + botData.countdownTimer.month +
@@ -658,7 +658,7 @@ controller.hears(
     });
 
     controller.on(
-        ['get timer'], ['direct_mention', 'mention', 'direct_message'],
+        ['get timer'], ['direct_mention', 'mention', 'direct_message', 'ambient'],
         function (bot, message) {
             bot.reply(message, "The timer is now set for: " + botData.countdownTimer.year +
                 "-" + botData.countdownTimer.month +
@@ -670,7 +670,7 @@ controller.hears(
 // Stupid easter egg section
 //************************************************
 controller.hears(
-    ['hello', 'hi', 'greetings'], ['direct_mention', 'mention', 'direct_message'],
+    ['hello', 'hi', 'greetings'], ['direct_mention', 'mention', 'direct_message', 'ambient'],
     function (bot, message) {
         bot.reply(message, 'Hello!');
     });
@@ -679,7 +679,7 @@ controller.hears(
 /**
  * AN example of what could be:
  * Any un-handled direct mention gets a reaction and a pat response!
- 
+ */
 controller.on('direct_message,mention,direct_mention', function (bot, message) {
     bot.api.reactions.add({
         timestamp: message.ts,
@@ -692,7 +692,6 @@ controller.on('direct_message,mention,direct_mention', function (bot, message) {
         bot.reply(message, 'Instructions Unclear.  GauntletBot now stuck in ceiling fan.');
     });
 });
-*/
 
 
 
