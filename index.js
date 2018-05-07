@@ -4,6 +4,7 @@
 var fs = require('fs');
 require('dotenv').load();
 const WebSocket = require('ws');
+const http = require('http');
 
 var botData = {
     companyList: [],
@@ -457,9 +458,10 @@ controller.on('direct_message,mention,direct_mention', function (bot, message) {
 
 //const WebSocket = require('ws');
 
-
+const server = http.createServer({});
 
 const wss = new WebSocket.Server({
+    server,
     port: 9999
 });
 
