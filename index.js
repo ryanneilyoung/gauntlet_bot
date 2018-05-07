@@ -435,7 +435,7 @@ controller.hears(
 /**
  * AN example of what could be:
  * Any un-handled direct mention gets a reaction and a pat response!
- */
+ 
 controller.on('direct_message,mention,direct_mention', function (bot, message) {
     bot.api.reactions.add({
         timestamp: message.ts,
@@ -448,6 +448,7 @@ controller.on('direct_message,mention,direct_mention', function (bot, message) {
         bot.reply(message, 'Instructions Unclear.  GauntletBot now stuck in ceiling fan.');
     });
 });
+*/
 
 
 
