@@ -221,7 +221,7 @@ controller.on(
     });
 
 controller.hears(
-    ['drop companies', 'delete company'], ['drop companies', 'delete company'], ['direct_mention', 'mention', 'direct_message', 'ambient'],
+    ['drop companies', 'delete company'], ['direct_mention', 'mention', 'direct_message', 'ambient'],
     function (bot, message) {
         response = 'The companies participating in the Guantlet Challenge are: \n';
         botData.companyList.forEach(function (item) {
@@ -231,7 +231,7 @@ controller.hears(
     });
 
 controller.on(
-    ['drop companies', 'delete company'], ['drop companies', 'delete company'], ['direct_mention', 'mention', 'direct_message', 'ambient'],
+    ['drop companies', 'delete company'], ['direct_mention', 'mention', 'direct_message', 'ambient'],
     function (bot, message) {
         response = 'The companies participating in the Guantlet Challenge are: \n';
         botData.companyList.forEach(function (item) {
