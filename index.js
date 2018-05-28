@@ -170,7 +170,7 @@ controller.on('bot_channel_join', function (bot, message) {
 // Companies Section
 //********************************************
 controller.hears(
-    ['add company'], ['direct_message', 'direct-mention'],
+    ['add company'], ['direct_message', 'direct_mention'],
     function (bot, message) {
         bot.startConversation(message, function (err, convo) {
             convo.ask('What company do you want to add?', function (answer, convo) {
@@ -209,7 +209,7 @@ controller.hears(
 // Challenger Section
 //************************************************
 controller.hears(
-    ['register challenger'], ['direct_message', 'direct-mention'],
+    ['register challenger'], ['direct_message', 'direct_mention'],
     function (bot, message) {
         bot.startConversation(message, function (err, convo) {
             question = 'Please type the number of the company that will become the challenger:\n';
@@ -235,7 +235,7 @@ controller.hears(
     });
 
 controller.hears(
-    ['who is the challenger', 'listChallenger'], ['direct_mention', 'direct_message'],
+    ['who is the challenger', 'list challenger', 'challenger'], ['direct_mention', 'direct_message'],
     function (bot, message) {
         response = 'The challenger is: ' + botData.challenger;
         bot.reply(message, response);
@@ -245,43 +245,7 @@ controller.hears(
 // START CHALLENGE
 //************************************************
 controller.hears(
-    ['newChallenge', 'NewChallenge'], ['direct_message', 'mention', 'direct-mention', 'ambient'],
-    function (bot, message) {
-        bot.startConversation(message, function (err, convo) {
-            convo.say('Oh boy, challenge time!');
-            question = 'The gauntlet will be dropped\nPlease pick a number for the company you want to challenge:\n';
-            i = 0;
-            botData.companyList.forEach(function (item) {
-                question += i + ': ' + item + '\n';
-                i++;
-            })
-
-            convo.ask(question, function (answer, convo) {
-                index = parseInt(answer.text);
-
-                if ((typeof index == "number") &&
-                    (index <= botData.companyList.length) &&
-                    (index >= 0)
-                ) {
-                    if (botData.companyList[index] == botData.challenger) {
-                        convo.say("You can't challenge yourself now.  Wait until you're alone tonight");
-                    } else {
-                        botData.challengee = botData.companyList[index];
-                        saveData();
-                        convo.say("THE CHALLENGE IS SET");
-                        convo.say(":boom:It's " + botData.challenger + ' versus ' + botData.challengee + ":boom:");
-                    }
-                } else {
-                    convo.say("Nice try funny guy \"" + answer.text + "\" is not a valid answer");
-                }
-
-                convo.next(); // continue with conversation
-            });
-        });
-    });
-
-controller.on(
-    ['newChallenge', 'NewChallenge'], ['direct_message', 'direct-mention'],
+    ['Challenge', 'challenge'], ['direct_message', 'direct_mention'],
     function (bot, message) {
         bot.startConversation(message, function (err, convo) {
             convo.say('Oh boy, challenge time!');
@@ -320,7 +284,7 @@ controller.on(
 // Set Countdown
 //************************************************
 controller.hears(
-    ['set timer', 'set countdown'], ['direct_message', 'direct-mention'],
+    ['set timer', 'set countdown'], ['direct_message', 'direct_mention'],
     function (bot, message) {
         bot.startConversation(message, function (err, convo) {
             question = 'Please type the number of the year:\n';
@@ -458,18 +422,18 @@ controller.hears(
             ":" + botData.countdownTimer.minute);
     });
 
-controller.hears(
-    ['help'], ['direct_mention', 'direct_message'],
-    function (bot, message) {
-        bot.reply(message, "Here are a list of all commands GauntletBot is currently capable of:");
-        bot.reply(message, "add company - Add a new company to the Gauntlet list. Please ensure that the company has a photo and a short bio that can be added to the website.");
-        bot.reply(message, "list company or list companies - Will provide a list of all companies currently available to challenge.");
-        bot.reply(message, "register challenger - Set the current “Challenger” that must challenge another company within the deadline set.");
-        bot.reply(message, "who is the challenger or listChallenger - Will display who the current challenger is.");
-        bot.reply(message, "newChallenge - The command that the challenger will call to challenge a new company.");
-        bot.reply(message, "set timer or set countdown - Use this command to set the time of the challenge event.");
-        bot.reply(message, "get timer - Will display the current event time.");
-    });
+    controller.hears(
+        ['help'], ['direct_mention', 'direct_message'],
+        function (bot, message) {
+            bot.reply(message, "Here are a list of all commands GauntletBot is currently capable of:");
+            bot.reply(message, "add company - Add a new company to the Gauntlet list. Please ensure that the company has a photo and a short bio that can be added to the website.");
+            bot.reply(message, "list company or list companies - Will provide a list of all companies currently available to challenge.");
+            bot.reply(message, "register challenger - Set the current “Challenger” that must challenge another company within the deadline set.");
+            bot.reply(message, "who is the challenger, list challenger, or challenger - Will display who the current challenger is.");
+            bot.reply(message, "challenge - The command that the challenger will call to challenge a new company.");
+            bot.reply(message, "set timer or set countdown - Use this command to set the time of the challenge event.");
+            bot.reply(message, "get timer - Will display the current event time.");
+        });
 
 
 //************************************************
