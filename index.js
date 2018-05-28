@@ -235,7 +235,7 @@ controller.hears(
     });
 
 controller.hears(
-    ['who is the challenger', 'list challenger'], ['direct_mention', 'direct_message'],
+    ['who is the challenger', 'listChallenger'], ['direct_mention', 'direct_message'],
     function (bot, message) {
         response = 'The challenger is: ' + botData.challenger;
         bot.reply(message, response);
@@ -245,7 +245,7 @@ controller.hears(
 // START CHALLENGE
 //************************************************
 controller.hears(
-    ['new challenge', 'New Challenge'], ['direct_message', 'direct-mention'],
+    ['newChallenge', 'NewChallenge'], ['direct_message', 'direct-mention'],
     function (bot, message) {
         bot.startConversation(message, function (err, convo) {
             convo.say('Oh boy, challenge time!');
@@ -281,7 +281,7 @@ controller.hears(
     });
 
     controller.on(
-        ['new challenge', 'New Challenge'], ['direct_message', 'direct-mention'],
+        ['newChallenge', 'NewChallenge'], ['direct_message', 'direct-mention'],
         function (bot, message) {
             bot.startConversation(message, function (err, convo) {
                 convo.say('Oh boy, challenge time!');
@@ -465,8 +465,8 @@ controller.hears(
             bot.reply(message, "add company - Add a new company to the Gauntlet list. Please ensure that the company has a photo and a short bio that can be added to the website.");
             bot.reply(message, "list company or list companies - Will provide a list of all companies currently available to challenge.");
             bot.reply(message, "register challenger - Set the current “Challenger” that must challenge another company within the deadline set.");
-            bot.reply(message, "who is the challenger or list challenger - Will display who the current challenger is.");
-            bot.reply(message, "challenge or new challenge - The command that the challenger will call to challenge a new company.");
+            bot.reply(message, "who is the challenger or listChallenger - Will display who the current challenger is.");
+            bot.reply(message, "newChallenge - The command that the challenger will call to challenge a new company.");
             bot.reply(message, "set timer or set countdown - Use this command to set the time of the challenge event.");
             bot.reply(message, "get timer - Will display the current event time.");
         });
