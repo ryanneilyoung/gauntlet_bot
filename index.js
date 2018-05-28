@@ -129,7 +129,6 @@ if (process.env.TOKEN || process.env.SLACK_TOKEN) {
     process.exit(1);
 }
 
-
 /**
  * A demonstration for how to handle websocket events. In this case, just log when we have and have not
  * been disconnected from the websocket. In the future, it would be super awesome to be able to specify
@@ -169,23 +168,7 @@ controller.on('bot_channel_join', function (bot, message) {
 // Companies Section
 //********************************************
 controller.hears(
-    ['add company'], ['direct_message', 'mention', 'direct-mention', 'ambient'],
-    function (bot, message) {
-        bot.startConversation(message, function (err, convo) {
-            convo.ask('What company do you want to add?', function (answer, convo) {
-                botData.companyList.push(answer.text);
-
-                saveData();
-                // do something with this answer!
-                // storeTacoType(convo.context.user, taco_type);
-                convo.say("I have added " + answer.text + " to the list."); // add another reply
-                convo.next(); // continue with conversation
-            });
-        });
-    });
-
-controller.on(
-    ['add company'], ['direct_message', 'mention', 'direct-mention', 'ambient'],
+    ['add company'], ['direct_message', 'direct-mention'],
     function (bot, message) {
         bot.startConversation(message, function (err, convo) {
             convo.ask('What company do you want to add?', function (answer, convo) {
@@ -201,17 +184,7 @@ controller.on(
     });
 
 controller.hears(
-    ['list companies', 'list company'], ['direct_mention', 'mention', 'direct_message', 'ambient'],
-    function (bot, message) {
-        response = 'The companies participating in the Guantlet Challenge are: \n';
-        botData.companyList.forEach(function (item) {
-            response += item + '\n';
-        })
-        bot.reply(message, response);
-    });
-
-controller.on(
-    ['list companies', 'list company'], ['direct_mention', 'mention', 'direct_message', 'ambient'],
+    ['list companies', 'list company'], ['direct_mention', 'direct_message'],
     function (bot, message) {
         response = 'The companies participating in the Guantlet Challenge are: \n';
         botData.companyList.forEach(function (item) {
@@ -221,17 +194,7 @@ controller.on(
     });
 
 controller.hears(
-    ['drop companies', 'delete company'], ['direct_mention', 'mention', 'direct_message', 'ambient'],
-    function (bot, message) {
-        response = 'The companies participating in the Guantlet Challenge are: \n';
-        botData.companyList.forEach(function (item) {
-            response += item + '\n';
-        })
-        bot.reply(message, response);
-    });
-
-controller.on(
-    ['drop companies', 'delete company'], ['direct_mention', 'mention', 'direct_message', 'ambient'],
+    ['drop companies', 'delete company'], ['direct_mention', 'direct_message'],
     function (bot, message) {
         response = 'The companies participating in the Guantlet Challenge are: \n';
         botData.companyList.forEach(function (item) {
@@ -244,33 +207,7 @@ controller.on(
 // Challenger Section
 //************************************************
 controller.hears(
-    ['register challenger'], ['direct_message', 'mention', 'direct-mention', 'ambient'],
-    function (bot, message) {
-        bot.startConversation(message, function (err, convo) {
-            question = 'Please type the number of the company that will become the challenger:\n';
-            question += displayArray(botData.companyList);
-
-            convo.ask(question, function (answer, convo) {
-                index = parseInt(answer.text);
-
-                if ((typeof index == "number") &&
-                    (index <= botData.companyList.length) &&
-                    (index >= 0)
-                ) {
-                    botData.challenger = botData.companyList[index];
-                    saveData();
-                    convo.say(botData.challenger + " is now the challenger.");
-                } else {
-                    convo.say("Nice try funny guy \"" + answer.text + "\" is not a valid answer");
-                }
-
-                convo.next(); // continue with conversation
-            });
-        });
-    });
-
-controller.on(
-    ['register challenger'], ['direct_message', 'mention', 'direct-mention', 'ambient'],
+    ['register challenger'], ['direct_message', 'direct-mention'],
     function (bot, message) {
         bot.startConversation(message, function (err, convo) {
             question = 'Please type the number of the company that will become the challenger:\n';
@@ -296,25 +233,17 @@ controller.on(
     });
 
 controller.hears(
-    ['who is the challenger', 'list challenger', 'challenger'], ['direct_mention', 'mention', 'direct_message', 'ambient'],
+    ['who is the challenger', 'list challenger', 'challenger'], ['direct_mention', 'direct_message'],
     function (bot, message) {
         response = 'The challenger is: ' + botData.challenger;
         bot.reply(message, response);
     });
-
-controller.on(
-    ['who is the challenger', 'list challenger', 'challenger'], ['direct_mention', 'mention', 'direct_message', 'ambient'],
-    function (bot, message) {
-        response = 'The challenger is: ' + botData.challenger;
-        bot.reply(message, response);
-    });
-
 
 //************************************************
 // START CHALLENGE
 //************************************************
 controller.hears(
-    ['Challenge', 'challenge'], ['direct_message', 'mention', 'direct-mention', 'ambient'],
+    ['Challenge', 'challenge'], ['direct_message', 'direct-mention'],
     function (bot, message) {
         bot.startConversation(message, function (err, convo) {
             convo.say('Oh boy, challenge time!');
@@ -348,178 +277,12 @@ controller.hears(
             });
         });
     });
-
-controller.on(
-    ['Challenge', 'challenge'], ['direct_message', 'mention', 'direct-mention', 'ambient'],
-    function (bot, message) {
-        bot.startConversation(message, function (err, convo) {
-            convo.say('Oh boy, challenge time!');
-            question = 'The gauntlet will be dropped\nPlease pick a number for the company you want to challenge:\n';
-            i = 0;
-            botData.companyList.forEach(function (item) {
-                question += i + ': ' + item + '\n';
-                i++;
-            })
-
-            convo.ask(question, function (answer, convo) {
-                index = parseInt(answer.text);
-
-                if ((typeof index == "number") &&
-                    (index <= botData.companyList.length) &&
-                    (index >= 0)
-                ) {
-                    if (botData.companyList[index] == botData.challenger) {
-                        convo.say("You can't challenge yourself now.  Wait until you're alone tonight");
-                    } else {
-                        botData.challengee = botData.companyList[index];
-                        saveData();
-                        convo.say("THE CHALLENGE IS SET");
-                        convo.say(":boom:It's " + botData.challenger + ' versus ' + botData.challengee + ":boom:");
-                    }
-                } else {
-                    convo.say("Nice try funny guy \"" + answer.text + "\" is not a valid answer");
-                }
-
-                convo.next(); // continue with conversation
-            });
-        });
-    });
-
 
 //************************************************
 // Set Countdown
 //************************************************
 controller.hears(
-    ['set timer', 'set countdown'], ['direct_message', 'mention', 'direct-mention', 'ambient'],
-    function (bot, message) {
-        bot.startConversation(message, function (err, convo) {
-            question = 'Please type the number of the year:\n';
-            question += displayArray(yearPicker);
-
-            convo.ask(question, function (answer, convo) {
-                index = parseInt(answer.text);
-
-                if ((typeof index == "number") &&
-                    (index <= yearPicker.length) &&
-                    (index >= 0)
-                ) {
-                    botData.countdownTimer.year = yearPicker[index];
-
-                    question2 = 'Please type the number of the month:\n';
-                    question2 += displayArray(monthPicker);
-
-                    convo.ask(question2, function (answer, convo) {
-                        index = parseInt(answer.text);
-
-                        if ((typeof index == "number") &&
-                            (index <= monthPicker.length) &&
-                            (index >= 0)
-                        ) {
-                            botData.countdownTimer.month = monthPicker[index];
-
-                            question3 = 'Day?:\n';
-                            question3 += displayArray(dayPicker);
-
-                            convo.ask(question3, function (answer, convo) {
-                                index = parseInt(answer.text);
-
-                                if ((typeof index == "number") &&
-                                    (index <= dayPicker.length) &&
-                                    (index >= 0)
-                                ) {
-                                    botData.countdownTimer.day = dayPicker[index];
-
-                                    question4 = 'Hour?\n';
-                                    question4 += displayArray(hourPicker);
-
-                                    convo.ask(question4, function (answer, convo) {
-                                        index = parseInt(answer.text);
-
-                                        if ((typeof index == "number") &&
-                                            (index <= hourPicker.length) &&
-                                            (index >= 0)
-                                        ) {
-                                            botData.countdownTimer.hour = hourPicker[index];
-
-                                            question5 = 'AM or PM?\n';
-                                            question5 += displayArray(meridianPicker);
-
-                                            convo.ask(question5, function (answer, convo) {
-                                                index = parseInt(answer.text);
-
-                                                if ((typeof index == "number") &&
-                                                    (index <= meridianPicker.length) &&
-                                                    (index >= 0)
-                                                ) {
-                                                    if (index == 1) {
-                                                        botData.countdownTimer.hour += 12;
-                                                    }
-                                                    question6 = 'Minute?\n';
-                                                    question6 += displayArray(minutePicker);
-
-                                                    convo.ask(question6, function (answer, convo) {
-                                                        index = parseInt(answer.text);
-
-                                                        if ((typeof index == "number") &&
-                                                            (index <= minutePicker.length) &&
-                                                            (index >= 0)
-                                                        ) {
-
-                                                            botData.countdownTimer.minute = minutePicker[index];
-                                                            saveData();
-                                                            convo.say("The timer is now set for: " + botData.countdownTimer.year +
-                                                                "-" + botData.countdownTimer.month +
-                                                                "-" + botData.countdownTimer.day +
-                                                                " " + botData.countdownTimer.hour +
-                                                                ":" + botData.countdownTimer.minute);
-                                                        } else {
-                                                            convo.say("Nice try funny guy \"" + answer.text + "\" is not a valid answer");
-                                                        }
-
-                                                        convo.next(); // continue with conversation
-                                                    });
-                                                } else {
-                                                    convo.say("Nice try funny guy \"" + answer.text + "\" is not a valid answer");
-                                                }
-
-                                                convo.next(); // continue with conversation
-                                            });
-                                        } else {
-                                            convo.say("Nice try funny guy \"" + answer.text + "\" is not a valid answer");
-                                        }
-
-                                        convo.next(); // continue with conversation
-                                    });
-                                } else {
-                                    convo.say("Nice try funny guy \"" + answer.text + "\" is not a valid answer");
-                                }
-
-                                convo.next(); // continue with conversation
-                            });
-
-
-
-
-
-
-                        } else {
-                            convo.say("Nice try funny guy \"" + answer.text + "\" is not a valid answer");
-                        }
-
-                        convo.next(); // continue with conversation
-                    });
-
-                } else {
-                    convo.say("Nice try funny guy \"" + answer.text + "\" is not a valid answer");
-                }
-
-                convo.next(); // continue with conversation
-            });
-        });
-    });
-
-controller.on(
-    ['set timer', 'set countdown'], ['direct_message', 'mention', 'direct-mention', 'ambient'],
+    ['set timer', 'set countdown'], ['direct_message', 'direct-mention'],
     function (bot, message) {
         bot.startConversation(message, function (err, convo) {
             question = 'Please type the number of the year:\n';
@@ -648,7 +411,7 @@ controller.on(
     });
 
 controller.hears(
-    ['get timer'], ['direct_mention', 'mention', 'direct_message', 'ambient'],
+    ['get timer'], ['direct_mention', 'direct_message'],
     function (bot, message) {
         bot.reply(message, "The timer is now set for: " + botData.countdownTimer.year +
             "-" + botData.countdownTimer.month +
@@ -657,20 +420,12 @@ controller.hears(
             ":" + botData.countdownTimer.minute);
     });
 
-controller.on(
-    ['get timer'], ['direct_mention', 'mention', 'direct_message', 'ambient'],
-    function (bot, message) {
-        bot.reply(message, "The timer is now set for: " + botData.countdownTimer.year +
-            "-" + botData.countdownTimer.month +
-            "-" + botData.countdownTimer.day +
-            " " + botData.countdownTimer.hour +
-            ":" + botData.countdownTimer.minute);
-    });
+
 //************************************************
 // Stupid easter egg section
 //************************************************
 controller.hears(
-    ['hello', 'hi', 'greetings'], ['direct_mention', 'mention', 'direct_message'],
+    ['hello', 'hi', 'greetings'], ['direct_mention', 'direct_message'],
     function (bot, message) {
         bot.reply(message, 'Hello!');
     });
