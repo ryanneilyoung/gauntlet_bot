@@ -245,7 +245,7 @@ controller.hears(
 // START CHALLENGE
 //************************************************
 controller.hears(
-    ['Challenge', 'challenge', 'new challenge', 'New Challenge'], ['direct_message', 'direct-mention'],
+    ['new challenge', 'New Challenge'], ['direct_message', 'direct-mention'],
     function (bot, message) {
         bot.startConversation(message, function (err, convo) {
             convo.say('Oh boy, challenge time!');
@@ -279,6 +279,42 @@ controller.hears(
             });
         });
     });
+
+    controller.on(
+        ['new challenge', 'New Challenge'], ['direct_message', 'direct-mention'],
+        function (bot, message) {
+            bot.startConversation(message, function (err, convo) {
+                convo.say('Oh boy, challenge time!');
+                question = 'The gauntlet will be dropped\nPlease pick a number for the company you want to challenge:\n';
+                i = 0;
+                botData.companyList.forEach(function (item) {
+                    question += i + ': ' + item + '\n';
+                    i++;
+                })
+    
+                convo.ask(question, function (answer, convo) {
+                    index = parseInt(answer.text);
+    
+                    if ((typeof index == "number") &&
+                        (index <= botData.companyList.length) &&
+                        (index >= 0)
+                    ) {
+                        if (botData.companyList[index] == botData.challenger) {
+                            convo.say("You can't challenge yourself now.  Wait until you're alone tonight");
+                        } else {
+                            botData.challengee = botData.companyList[index];
+                            saveData();
+                            convo.say("THE CHALLENGE IS SET");
+                            convo.say(":boom:It's " + botData.challenger + ' versus ' + botData.challengee + ":boom:");
+                        }
+                    } else {
+                        convo.say("Nice try funny guy \"" + answer.text + "\" is not a valid answer");
+                    }
+    
+                    convo.next(); // continue with conversation
+                });
+            });
+        });
 
 //************************************************
 // Set Countdown
