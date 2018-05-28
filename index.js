@@ -420,6 +420,19 @@ controller.hears(
             ":" + botData.countdownTimer.minute);
     });
 
+    controller.hears(
+        ['help'], ['direct_mention', 'direct_message'],
+        function (bot, message) {
+            bot.reply(message, "Here are a list of all commands GauntletBot is currently capable of:");
+            bot.reply(message, "add company - Add a new company to the Gauntlet list. Please ensure that the company has a photo and a short bio that can be added to the website.");
+            bot.reply(message, "list company or list companies - Will provide a list of all companies currently available to challenge.");
+            bot.reply(message, "register challenger - Set the current “Challenger” that must challenge another company within the deadline set.");
+            bot.reply(message, "who is the challenger, list challenger, or challenger - Will display who the current challenger is.");
+            bot.reply(message, "challenge - The command that the challenger will call to challenge a new company.");
+            bot.reply(message, "set timer or set countdown - Use this command to set the time of the challenge event.");
+            bot.reply(message, "get timer - Will display the current event time.");
+        });
+
 
 //************************************************
 // Stupid easter egg section
