@@ -57,7 +57,6 @@ function loadData() {
         }
         console.log('DATA: ' + data);
         if (data.length > 0) {
-            console.log('madeithere');
             botData = JSON.parse(data);
         }
     });
@@ -120,12 +119,10 @@ if (process.env.TOKEN || process.env.SLACK_TOKEN) {
     var customIntegration = require('./lib/custom_integrations');
     var token = (process.env.TOKEN) ? process.env.TOKEN : process.env.SLACK_TOKEN;
     var controller = customIntegration.configure(token, config, onInstallation);
-    console.log('customIntegration');
 } else if (process.env.CLIENT_ID && process.env.CLIENT_SECRET && process.env.PORT) {
-    //Treat this as an app
+    //Treat this as an app - production uses this configuration
     var app = require('./lib/apps');
     var controller = app.configure(process.env.PORT, process.env.CLIENT_ID, process.env.CLIENT_SECRET, config, onInstallation);
-    console.log('app');
 } else {
     console.log('Error: If this is a custom integration, please specify TOKEN in the environment. If this is an app, please specify CLIENTID, CLIENTSECRET, and PORT in the environment');
     process.exit(1);
@@ -426,13 +423,13 @@ controller.hears(
     ['help'], ['direct_mention', 'direct_message'],
     function (bot, message) {
         bot.reply(message, "Here are a list of all commands GauntletBot is currently capable of:\n" +
-            "add company - Add a new company to the Gauntlet list. Please ensure that the company has a photo and a short bio that can be added to the website.\n" +
-            "list company or list companies - Will provide a list of all companies currently available to challenge.\n" +
-            "register challenger - Set the current “Challenger” that must challenge another company within the deadline set.\n" +
-            "who is the challenger, list challenger, or challenger - Will display who the current challenger is.\n" +
-            "challenge - The command that the challenger will call to challenge a new company.\n" +
-            "set timer or set countdown - Use this command to set the time of the challenge event.\n" +
-            "get timer - Will display the current event time.");
+            "*add company* - Add a new company to the Gauntlet list. Please ensure that the company has a photo and a short bio that can be added to the website.\n" +
+            "*list company* or *list companies* - Will provide a list of all companies currently available to challenge.\n" +
+            "*register challenger* - Set the current “Challenger” that must challenge another company within the deadline set.\n" +
+            "*who is the challenger*, *list challenger*, or *challenger* - Will display who the current challenger is.\n" +
+            "*challenge* - The command that the challenger will call to challenge a new company.\n" +
+            "*set timer* or *set countdown* - Use this command to set the time of the challenge event.\n" +
+            "*get timer* - Will display the current event time.");
     });
 
 
