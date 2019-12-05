@@ -22,10 +22,10 @@
   },
   "homepage": "https://github.com/ryanneilyoung/gauntlet_bot#readme",
   "engines": {
-    "node": "5.1.1"
+    "node": "^5.1.1"
   },
   "dependencies": {
-    "botkit": "0.6.14",
+    "botkit": "^0.7.5",
     "botkit-storage-mongo": "^1.0.7",
     "dotenv": "^5.0.1",
     "mongodb": "^3.0.8",
